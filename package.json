@@ -10,8 +10,8 @@
   },
   "scripts": {
     "postinstall": "curl -s https://raw.githubusercontent.com/reactorcore/pomander/master/bin/install | bash",
-    "start": "node server/basic-server.js",
-    "start:es6": "babel-node server/basic-server.js",
+    "start": "node server/express-server.js",
+    "start:es6": "babel-node server/express-server.js",
     "test": "mocha server/spec",
     "test:es6": "mocha --compilers js:babel-register server/spec",
     "lint": "eslint ./"
@@ -31,6 +31,9 @@
     ]
   },
   "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.3",
+    "nodemon": "^1.17.2",
     "underscore": "^1.8.3"
   }
 }
