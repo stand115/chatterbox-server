@@ -45,7 +45,6 @@ var app = {
       data: JSON.stringify(message),
       contentType: 'application/json',
       success: function (data) {
-        console.log('Success!');
         // Clear messages input
         app.$message.val('');
 
@@ -65,7 +64,6 @@ var app = {
       data: { order: '-createdAt' },
       success: function(data) {
         // Don't bother if we have nothing to work with
-        // console.log(typeof data);
         data = JSON.parse(data);
         if (!data.results || !data.results.length) { return; }
 
@@ -74,7 +72,6 @@ var app = {
 
         // Get the last message
         var mostRecentMessage = data.results[data.results.length - 1];
-        console.log(mostRecentMessage);
 
         // Only bother updating the DOM if we have a new message
         if (mostRecentMessage.objectId !== app.lastMessageId) {
@@ -169,7 +166,7 @@ var app = {
     $message.text(message.text).appendTo($chat);
 
     // Add the message to the UI
-    app.$chats.append($chat);
+    app.$chats.prepend($chat);
 
   },
 
