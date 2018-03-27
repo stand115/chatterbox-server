@@ -12,6 +12,10 @@ this file and include it in basic-server.js so that it actually works.
 
 **************************************************************/
 
+var responseObject = {
+  results: [{objectId: 'Jbv7momBDt', username: 'Jono', roomname: 'lobby', text: 'Do my bidding!',  createdAt: '2018-03-17T23:52:01.595Z', updatedAt: '2018-03-17T23:52:01.595Z'}]
+};
+
 var requestHandler = function(request, response) {
   // Request and Response come from node's http module.
   //
@@ -27,9 +31,62 @@ var requestHandler = function(request, response) {
   // Adding more logging to your server can be an easy way to get passive
   // debugging help, but you should always be careful about leaving stray
   // console.logs in your code.
+
+  var id = function () {
+    // Math.random should be unique because of its seeding algorithm.
+    // Convert it to base 36 (numbers + letters), and grab the first 9 characters
+    // after the decimal.
+    return '_' + Math.random().toString(36).substr(2, 10);
+  };
+
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
 
+
+  if (request.method === 'OPTIONS') {
+    console.log('!OPTIONS');
+    var headers = {};
+    // IE8 does not allow domains to be specified, just the *
+    // headers["Access-Control-Allow-Origin"] = req.headers.origin;
+    headers["Access-Control-Allow-Origin"] = "*";
+    headers["Access-Control-Allow-Methods"] = "POST, GET, PUT, DELETE, OPTIONS";
+    headers["Access-Control-Allow-Credentials"] = false;
+    headers["Access-Control-Max-Age"] = '86400'; // 24 hours
+    headers["Access-Control-Allow-Headers"] = "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept";
+    response.writeHead(200, headers);
+    response.end();
+  }
+
+  if (request.method === 'GET') {
+    var statusCode = 200;
+  }
+
+  // URL path routes to listen on
+
+  //break apart request URL and check if it exists in routes
+  //var urlParts = url.parse(request.url);
+
   // The outgoing status.
+  
+
+  if (!(request.url.startsWith('/classes/messages'))) {
+    statusCode = 404;
+  }
+
+  if (request.method === 'POST') {
+    statusCode = 201;
+    let body = [];
+    request.on('data', function(chunk) {
+      body.push(chunk);
+    }).on('end', function() {
+      body = Buffer.concat(body).toString();
+      body = JSON.parse(body);
+      body.createdAt = new Date();
+      body.objectId = id();
+      responseObject.results.push(body);
+      console.log(responseObject);
+    });
+  }
+
   var statusCode = 200;
 
   // See the note below about CORS headers.
@@ -45,6 +102,7 @@ var requestHandler = function(request, response) {
   // which includes the status and all headers.
   response.writeHead(statusCode, headers);
 
+
   // Make sure to always call response.end() - Node may not send
   // anything back to the client until you do. The string you pass to
   // response.end() will be the body of the response - i.e. what shows
@@ -52,7 +110,7 @@ var requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  response.end('Hello, World!');
+  response.end(JSON.stringify(responseObject));
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
@@ -70,4 +128,7 @@ var defaultCorsHeaders = {
   'access-control-allow-headers': 'content-type, accept',
   'access-control-max-age': 10 // Seconds.
 };
+
+module.exports.requestHandler = requestHandler;
+module.exports.defaultCorsHeaders = defaultCorsHeaders;
 
