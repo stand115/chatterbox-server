@@ -8,15 +8,19 @@ var fs = require('fs');
 var path = require('path');
 var ip = '127.0.0.1';
 var port = 8000;
+var responseObject;
 
 //dummy data to get us started
-var responseObject = {
-  results: [{objectId: 'Jbv7momBDt', username: 'Jono', roomname: 'lobby', text: 'Do my bidding!', createdAt: '2018-03-17T23:52:01.595Z', updatedAt: '2018-03-17T23:52:01.595Z'}]
-};
+fs.readFile(process.cwd() + '/server/data/messages.json', 'utf-8', function(err, data) {
+  if (err) {
+    throw err;
+  }
+  responseObject = JSON.parse(data);
+});
 
 
 //helper ID function to generate a random object ID
- var id = function () {
+var id = function () {
   return '_' + Math.random().toString(36).substr(2, 10);
 };
 
@@ -34,7 +38,7 @@ app.use(express.static(path.join(__dirname, 'client')));
 
 
 //handle OPTIONS requests
-app.options("/*", function(request, response, next){
+app.options('/*', function(request, response, next) {
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
   response.header('Access-Control-Allow-Origin', '*');
   response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
@@ -57,6 +61,15 @@ app.post('/classes/messages', function(request, response) {
   body.createdAt = new Date();
   body.objectId = id();
   responseObject.results.push(body);
+
+  //write data to persisting file
+  fs.writeFile(process.cwd() + '/server/data/messages.json', JSON.stringify(responseObject), 'utf-8', function(err) {
+    if (err) {
+      throw err;
+    }
+    console.log('Done!');    
+  });
+
   response.send(JSON.stringify(responseObject));
   response.end();
 });

@@ -1,3 +1,4 @@
+//import requirements
 var fs = require('fs');
 var path = require('path');
 
@@ -35,7 +36,7 @@ var requestHandler = function(request, response) {
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
 
   if (!(request.url.startsWith('/classes/messages'))) {
-    statusCode = 404;
+    var statusCode = 404;
   }
 
   // handle GET requests
