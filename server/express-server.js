@@ -1,7 +1,6 @@
 // launch http://127.0.0.1:8000/ in the browser to view client (after running npm start/nodemon express-server.js)
 //import requirements
 var http = require('http');
-var requests = require('./request-handler');
 var express = require('express');
 var bodyParser = require('body-parser');
 var fs = require('fs');

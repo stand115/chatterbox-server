@@ -1,2 +1,9 @@
 #chatterbox-server
-This is a project I completed as a student at [hackreactor](http://hackreactor.com). This project was worked on with a pair.
+
+## Overview
+
+Chatterbox is a private chat service. 
+- The default server uses Express (express-server.js)
+- There is also a Node JS implementation (basic-server.js)
+
+This was a project done at Hack Reactor with a partner.
